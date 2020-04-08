@@ -21,12 +21,12 @@ const style = StyleSheet.create({
     position: 'relative',
   },
 
-  philippines: {
-    height: 180,
+  world: {
     position: 'absolute',
-    right: 20,
-    top: 20,
+    height: 180,
     width: 351.75,
+    left: 60,
+    top: 10,
   },
 
   title: {
@@ -51,8 +51,8 @@ const style = StyleSheet.create({
 
   info: {
     flex: 0.4, 
-    marginBottom: 10,
     flexDirection: 'row',
+    marginBottom: 10,
   },
 
   iconContainer: {
@@ -86,7 +86,7 @@ const style = StyleSheet.create({
   },
 
   infoActive: {
-    color: Colors.ORANGE
+    color: Colors.LIGHT_ORANGE
   },
 
   infoDeaths: {
@@ -124,11 +124,6 @@ const style = StyleSheet.create({
     padding : 15,
   },
 
-  scrollView: {
-    // height: '50%',
-    // flex: 1,
-  },
-
   tile: {
     backgroundColor: Colors.WHITE,
     borderRadius: 15,
@@ -150,55 +145,20 @@ const style = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  cases: {
-    color: Colors.PICKLED_BLUEWOOD,
-  },
-
-  death: {
-    color: Colors.VALENCIA,
-  },
-
-  recovered: {
-    color: Colors.LIG,
-  },
-
-  textWorld: {
-    color: Colors.PICKLED_BLUEWOOD,
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-
   country: {
     color: Colors.PICKLED_BLUEWOOD,
     fontSize: 22,
     fontWeight: 'bold',
   },
 
-  text: {
-    color: Colors.PICKLED_BLUEWOOD,
+  confirmed: {
+    color: Colors.KASHMIR_BLUE,
     fontSize: 16,
-    fontWeight: 'normal',
   },
 
-  
-  button: {
-    borderRadius: 15,
-    padding: 15,
-    backgroundColor: Colors.PICKLED_BLUEWOOD,
-    
-    shadowOffset			: { 
-      height	: 0.4, 
-      width		: 0.4
-    },
-    shadowOpacity			: 0.2, 
-    shadowRadius			: 1,
-  },
-
-  buttonText: {
-    color: Colors.WHITE,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  active: {
+    color: Colors.ORANGE,
+    fontSize: 16,
   },
 
   row: {

@@ -3,8 +3,8 @@ import axios from 'axios';
 import { 
   FlatList,
   Image,
+  RefreshControl,
   SafeAreaView,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -16,28 +16,29 @@ import style from './style';
 import world from '../../assets/image/world.png';
 import { formatNumber, getCountryCode } from '../../utils/helper';
 
-const PH_LOCAL_CASES_API = `https://services5.arcgis.com/mnYJ21GiFTR97WFg/ArcGIS/rest/services/PH_masterlist/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=FID%20ASC`;
+const COVID19_SUMMARY_API = `https://api.covid19api.com/summary`;
+const COVID19_WORLD_API = `https://corona.lmao.ninja/all`;
 
 const Tile = (props) => {
-  const { onPress, value } = props;
+  const { countries, onPress, value } = props;
+
+  const rank = countries.findIndex(val => val.Country === value.Country);
 
   return (
     <TouchableOpacity style={style.tile} onPress={onPress}>
       <Flag
-        code={getCountryCode(value.Country)}
+        code={value.CountryCode}
         size={64}
         type='flat'
       />
       <View style={style.details}>
-        <Text style={style.country}>
-          <Text style={style.country}>{`${value.Country}`}</Text>
-          {` | `}
-          <Text style={style.country}>{`${formatNumber(value.TotalConfirmed)} cases`}</Text>
-        </Text>
+        <Text style={style.country}>{`${value.Country} (${rank + 1})`}</Text>
         <Text>
-          <Text style={style.death}>{`${formatNumber(value.TotalDeaths)} deaths`}</Text>
+          <Text style={[style.infoNumber, style.confirmed]}>{`${formatNumber(value.TotalConfirmed)} `}</Text>
+          <Text style={[style.infoText, style.confirmed]}>{`confirmed`}</Text>
           {` | `}
-          <Text style={style.recovered}>{`${formatNumber(value.TotalRecovered)} recovered`}</Text>
+          <Text style={[style.infoNumber, style.active]}>{`${formatNumber(value.TotalConfirmed - (value.TotalDeaths + value.TotalRecovered ))} `}</Text>
+          <Text style={[style.infoText, style.active]}>{`active`}</Text>
         </Text>
       </View>
     </TouchableOpacity>
@@ -45,35 +46,106 @@ const Tile = (props) => {
 }
 
 const Countries = (props) => {
-  const { navigation, route } = props;
+  const { navigation } = props;
 
-  const [country, setCountry] = useState(route.params.data);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [total, setTotal] = useState({
+    cases     : 0,
+    deaths    : 0,
+    recovered : 0,
+    updated   : 0,
+    active    : 0,
+  });
+  const [countries, setCountries] = useState([]);
+  const [searchedCountries, setSearchedCountries] = useState([]);
   const [search, setSearch] = useState('');
-  const [localCases, setLocalCases] = useState([]);
 
   useEffect(() => {
-    getPhilippineCases();
-    if (search !== '') {
-      const countries = country.filter(cases => cases.Country.includes(search));
-      setCountry(countries);
-    } else {
-      setCountry(route.params.data);
-    }
-  }, [search])
+    getCovid19Data();
+    getWorldCovid19Cases();
+  }, []);
 
-  const onChangeText = (value) => {
+  useEffect(() => {
+    const newSearchedCountries = countries.filter(cases => cases.Country.includes(search));
+    setSearchedCountries(newSearchedCountries);
+  }, [search]);
 
-    setSearch(value);
+  const refreshData = () => {
+    setIsRefreshing(prevState => !prevState);
+
+    axios.all([
+      axios.get(COVID19_SUMMARY_API),
+      axios.get(COVID19_WORLD_API)
+    ]).then(([response1, response2]) => {
+      console.log('success');
+
+      const filteredCountries = response1.data.Countries.filter(value => filterCountry(value.Country)).sort((a, b) => b.TotalConfirmed - a.TotalConfirmed).map(country => {
+        return{
+          ...country,
+          Date: response1.data.Date,
+        }
+      });
+
+      setIsRefreshing(prevState => !prevState);
+      setCountries(filteredCountries);
+      setSearchedCountries(filteredCountries);
+      setTotal({
+        cases     : response2.data.cases,
+        deaths    : response2.data.deaths,
+        recovered : response2.data.recovered,
+        updated   : response2.data.updated,
+        active    : response2.data.active,
+      });
+    }).catch(error => {
+      console.log('error : ', error);
+      setIsRefreshing(prevState => !prevState);
+    })
   }
 
-  const getPhilippineCases = () => {
-    axios.get(PH_LOCAL_CASES_API).then(response => {
-      // console.log('features : ', response.data.features);
+  const filterCountry = (country) => {
+    if (country === 'Korea, South' || country === 'Republic of Korea' ||country === 'Iran (Islamic Republic of)' || country === 'Russian Federation' || country === 'Taiwan*' || country === 'Viet Nam')
+      return false  
+  
+    return true;
+  }
 
-      setLocalCases(response.data.features);
+  const getCovid19Data = () => {
+    axios.get(COVID19_SUMMARY_API).then(response => {
+      // console.log('COVID19_SUMMARY_API response : ', response);
+
+      const filteredCountries = response.data.Countries.filter(value => filterCountry(value.Country)).sort((a, b) => b.TotalConfirmed - a.TotalConfirmed).map(country => {
+        return{
+          ...country,
+          Date: response.data.Date,
+        }
+      });
+
+      console.log('filteredCountries : ', filteredCountries);
+      setCountries(filteredCountries);
+      setSearchedCountries(filteredCountries)
     }).catch(error => {
       console.log('error : ', error);
     });
+  }
+
+  const getWorldCovid19Cases = () => {
+    axios.get(COVID19_WORLD_API).then(response => {
+      // console.log('COVID19_WORLD_API response : ', response);
+
+      setTotal({
+        cases     : response.data.cases,
+        deaths    : response.data.deaths,
+        recovered : response.data.recovered,
+        updated   : response.data.updated,
+        active    : response.data.active,
+      });
+    }).catch(error => {
+      console.log('error : ', error);
+    });
+  }
+
+  const onChangeText = (value) => {
+    setSearch(value);
   }
  
   return (
@@ -81,14 +153,12 @@ const Countries = (props) => {
       <SafeAreaView style={style.topSafeAreaView} />
       <View style={style.container}>
         <View style={style.header}>
-
           <Image
             style={style.world}
             source={world}
           />
-
-          <Text style={style.title}>World Statistics</Text>
-          <Text style={style.subheading}>{`As of ${moment.unix(route.params.total.updated).format('LT MMMM DD, YYYY')}`}</Text>
+          <Text style={style.title}>WORLD NUMBERS</Text>
+          <Text style={style.subheading}>{`As of ${moment(total.updated).format('LT MMMM DD, YYYY')}`}</Text>
 
           <View style={style.infoRow}>
             <View style={style.info}>
@@ -96,7 +166,7 @@ const Countries = (props) => {
                 <Text style={style.infoNumber}>X</Text>
               </View>
               <View style={style.infoDetails}>
-                <Text style={style.infoNumber}>{`${formatNumber(route.params.total.cases)}`}</Text>
+                <Text style={style.infoNumber}>{`${formatNumber(total.cases)}`}</Text>
                 <Text style={[style.infoText, style.infoConfirmed]}>confirmed</Text>
               </View>
             </View>
@@ -105,7 +175,7 @@ const Countries = (props) => {
                 <Text style={style.infoNumber}>X</Text>
               </View>
               <View style={style.infoDetails}>
-                <Text style={style.infoNumber}>{`${formatNumber(route.params.total.active)}`}</Text>
+                <Text style={style.infoNumber}>{`${formatNumber(total.active)}`}</Text>
                 <Text style={[style.infoText, style.infoActive]}>active</Text>
               </View>
             </View>
@@ -116,7 +186,7 @@ const Countries = (props) => {
                 <Text style={style.infoNumber}>X</Text>
               </View>
               <View style={style.infoDetails}>
-                <Text style={style.infoNumber}>{`${formatNumber(route.params.total.deaths)}`}</Text>
+                <Text style={style.infoNumber}>{`${formatNumber(total.deaths)}`}</Text>
                 <Text style={[style.infoText, style.infoDeaths]}>deaths</Text>
               </View>
             </View>
@@ -125,7 +195,7 @@ const Countries = (props) => {
                 <Text style={style.infoNumber}>X</Text>
               </View>
               <View style={style.infoDetails}>
-                <Text style={style.infoNumber}>{`${formatNumber(route.params.total.recovered)}`}</Text>
+                <Text style={style.infoNumber}>{`${formatNumber(total.recovered)}`}</Text>
                 <Text style={[style.infoText, style.infoRecovered]}>recovered</Text>
               </View>
             </View>
@@ -143,36 +213,16 @@ const Countries = (props) => {
             value={search}
             onChangeText={onChangeText}
           />
-          {/* <FlatList
-            data={localCases}
-            bounces={false}
-            renderItem={({ item }) =>                   
-              <TouchableOpacity style={[style.tile, style.row]} onPress={() => navigation.navigate('Country', value)}>
-                <Text>{`FID: ${item.attributes.FID}`}</Text>
-                <Text>{`PH Mater List: ${item.attributes.PH_masterl}`}</Text>
-                <Text>{`Sequ: ${item.attributes.sequ}`}</Text>
-                <Text>{`Age: ${item.attributes.edad}`}</Text>
-                <Text>{`Gender: ${item.attributes.kasarian}`}</Text>
-                <Text>{`Nationality: ${item.attributes.nationalit}`}</Text>
-                <Text>{`Residence: ${item.attributes.residence}`}</Text>
-                <Text>{`Travel History: ${item.attributes.travel_hx}`}</Text>
-                <Text>{`Symptoms: ${item.attributes.symptoms}`}</Text>
-                <Text>{`Confirmed: ${item.attributes.confirmed}`}</Text>
-                <Text>{`Facility: ${item.attributes.facility}`}</Text>
-                <Text>{`Latitude: ${item.attributes.latitude}`}</Text>
-                <Text>{`Longitude: ${item.attributes.longitude}`}</Text>
-                <Text>{`Status: ${item.attributes.status}`}</Text>
-                <Text>{`Epi Link: ${item.attributes.epi_link}`}</Text>
-                <Text>{`Date: ${item.attributes.petsa}`}</Text>
-              </TouchableOpacity>
-            }
-            keyExtractor={item => item.attributes.FID}
-          /> */}
           <FlatList
-            data={country}
-            bounces={false}
-            renderItem={({ item }) => <Tile value={item} onPress={() => navigation.navigate('Country', item)}/>}
+            data={searchedCountries}
+            renderItem={({ item }) => <Tile countries={countries} value={item} onPress={() => navigation.navigate('Country', item)}/>}
             keyExtractor={item => item.Country}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={refreshData}
+              />
+            }
           />
         </View>
       </View>

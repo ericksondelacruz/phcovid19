@@ -3,6 +3,7 @@ export default Colors = {
   KASHMIR_BLUE      : '#436B8F',  // Primary Light
   VALENCIA          : '#D5424C',  // Secondary
   BRINK_PINK        : '#FF757F',  // Secondary Light
+  LIGHT_BRINK_PINK  : '#fc92a7',  // Secondary Light
 
   PRIMARY           : '#5D71AB',
   SECONDARY         : '#FDC867',
@@ -11,7 +12,8 @@ export default Colors = {
   BACKGROUND_COLOR  : '#EFF0F6',
   WHITE             : 'white',
   LIGHT_GREEN       : 'lightgreen',
-  GREEN             : 'green',
+  GREEN             : '#3CB043',
   SKY_BLUE          : 'skyblue',
-  ORANGE            : 'orange',
+  ORANGE            : '#ED7014',
+  LIGHT_ORANGE      : '#FDA172',
 }

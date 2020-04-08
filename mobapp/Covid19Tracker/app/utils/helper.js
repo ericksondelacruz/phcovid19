@@ -2,6 +2,10 @@ import RNCountry from "react-native-countries";
 const COUNTRY_NAMES_WITH_CODE = RNCountry.getCountryNamesWithCodes;
 
 export const formatNumber = (number) => {
+
+  if (number === null) 
+    return 'NO DATA'
+
   return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 

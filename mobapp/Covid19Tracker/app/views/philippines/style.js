@@ -19,51 +19,18 @@ const style = StyleSheet.create({
   },
 
   header: {
-    flex : 1,
+    height: '30%',
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40,
     backgroundColor: Colors.PICKLED_BLUEWOOD,
-    // overflow: 'hidden',
   },
 
-  worldMap: {
+  philippines: {
+    height: 312, // 624
     position: 'absolute',
-    height: 180,
-    width: 351.75,
-    left: 13,
-    bottom: 40,
-  },
-
-  virus: {
-    position: 'absolute',
-  },
-
-  position1: {
-    width: 120,
-    height: 120,
     right: -20,
-    top: -90
-  },
-
-  position2: {
-    width: 30,
-    height: 30,
-    right: 115,
-    top: -55
-  },
-
-  position3: {
-    width: 50,
-    height: 50,
-    right: 90,
-    top: 25
-  },
-
-  position4: {
-    width: 60,
-    height: 60,
-    right: -30,
-    top: 45
+    top: -60,
+    width: 234, // 468
   },
 
   title: {
@@ -74,7 +41,7 @@ const style = StyleSheet.create({
   },
 
   subtitle: {
-    color: Colors.VALENCIA,
+    color: Colors.BRINK_PINK,
     fontSize: 40,
     fontWeight: 'bold',
     marginLeft: 20,
@@ -92,6 +59,9 @@ const style = StyleSheet.create({
 
   tileRow: {
     flexDirection: 'row',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 
   tile: {
@@ -111,70 +81,70 @@ const style = StyleSheet.create({
     shadowRadius			: 1,
   },
 
-  tileTopLeft: {
-    borderTopLeftRadius: 30,
-    marginRight: 5,
+  tileMain: {
+    paddingLeft: 20, 
+    paddingTop: 40, 
   },
 
-  tileTopRight: {
-    borderTopRightRadius: 30,
-    marginLeft: 5,
-  },
-
-  tileCenterLeft: {
-    marginRight: 5,
-  },
-
-  tileCenterRight: {
-    marginLeft: 5,
-  },
-
-  tileBottomLeft: {
-    borderBottomLeftRadius: 30,
-    marginRight: 5,
-    marginBottom: 20,
-  },
-
-  tileBottomRight: {
-    borderBottomRightRadius: 30,
-    marginLeft: 5,
-    marginBottom: 20,
-  },
-
-  world: {
-    height: 64,
-    justifyContent: 'flex-end',
-  },
-
-  textWorld: {
-    color: Colors.PICKLED_BLUEWOOD,
-    fontSize: 28,
+  tileMainText: {
+    color: Colors.KASHMIR_BLUE,
+    fontSize: 20,
     fontWeight: 'bold',
   },
 
-  country: {
-    color: Colors.PICKLED_BLUEWOOD,
-    fontSize: 22,
-    fontWeight: 'bold',
+  tileMainNumber: {
+    color: Colors.KASHMIR_BLUE,
+    fontWeight: '800',
+    fontSize: 38,
+    paddingBottom: 5,
+    paddingTop: 5,
   },
 
-  number: {
-    color: Colors.VALENCIA,
-    fontSize: 18,
-    fontWeight: 'bold',
+  tileLeft: {
+    marginRight: 5,
   },
 
-  text: {
+  tileRight: {
+    marginLeft: 5,
+  },
+
+  tileText: {
     color: Colors.PICKLED_BLUEWOOD,
     fontSize: 16,
-    fontWeight: 'normal',
   },
 
+  tileNumber: {
+    color: Colors.PICKLED_BLUEWOOD,
+    fontWeight: 'bold',
+    fontSize: 28,
+  },
+
+  confirmed: {
+    color: Colors.KASHMIR_BLUE
+  },
+
+  active: {
+    color: Colors.ORANGE,
+  },  
+
+  deaths: {
+    color: Colors.VALENCIA
+  },
+
+  recovered: {
+    color: Colors.GREEN
+  },
+
+  normal: {
+    color: Colors.PICKLED_BLUEWOOD
+  },
   
   button: {
-    borderRadius: 15,
-    padding: 15,
     backgroundColor: Colors.PICKLED_BLUEWOOD,
+    borderRadius: 15,
+    height: 100,
+    marginBottom: 10,
+    padding: 15,
     
     shadowOffset			: { 
       height	: 0.4, 
@@ -184,11 +154,27 @@ const style = StyleSheet.create({
     shadowRadius			: 1,
   },
 
+  virus: {
+    position: 'absolute',
+    height: 86,
+    width: 86,
+    right: 10,
+    top: 8,
+  },
+
+  world: {
+    position: 'absolute',
+    height: 81.8181818182,
+    width: 159.8863636364,
+    right: 15,
+    top: 8,
+  },
+
   buttonText: {
     color: Colors.WHITE,
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    textAlign: 'center',
+    // textAlign: 'center',
   },
 
 });

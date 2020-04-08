@@ -5,9 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Philippines from '../views/philippines';
-import Home from '../views/home';
+import PhilippineCases from '../views/philippine-cases';
+import PhilippineStatistics from '../views/philippine-statistics';
 import Countries from '../views/countries';
 import Country from '../views/country';
+import Information from '../views/information';
+import News from '../views/news';
 import GlobalMap from '../views/global-map';
 import CountryMap from '../views/country-map';
 import Colors from '../utils/colors';
@@ -38,8 +41,15 @@ const Navigation = () => {
           }}
         />
         <Stack.Screen 
-          name="Home" 
-          component={Home} 
+          name="PhilippineStatistics" 
+          component={PhilippineStatistics} 
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="PhilippineCases" 
+          component={PhilippineCases} 
           options={{
             headerShown: false,
           }}
@@ -54,6 +64,20 @@ const Navigation = () => {
         <Stack.Screen 
           name="Country" 
           component={Country} 
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="Information" 
+          component={Information} 
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="News" 
+          component={News} 
           options={{
             headerShown: false,
           }}
